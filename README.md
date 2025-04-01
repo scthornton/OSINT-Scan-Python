@@ -46,7 +46,7 @@ pip install requests beautifulsoup4 rich
 3. Make the script executable (Linux/Mac):
 
 ```bash
-chmod +x osintv3.py
+chmod +x osint_tool.py
 ```
 
 ## Usage
@@ -54,19 +54,19 @@ chmod +x osintv3.py
 ### Basic Usage
 
 ```bash
-python osintv3.py "John Smith"
+python osint_tool.py "John Smith"
 ```
 
 ### Save Results to JSON File
 
 ```bash
-python osintv3.py "Jane Doe" --output results.json
+python osint_tool.py "Jane Doe" --output results.json
 ```
 
 ### Additional Options
 
 ```bash
-python osintv3.py "Alex Johnson" --rate-limit 2 --timeout 15 --verbose
+python osint_tool.py "Alex Johnson" --rate-limit 2 --timeout 15 --verbose
 ```
 
 ### Command-Line Arguments
