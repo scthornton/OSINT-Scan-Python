@@ -1,9 +1,4 @@
 
-<invoke name="artifacts">
-<parameter name="id">osint-readme</parameter>
-<parameter name="type">text/markdown</parameter>
-<parameter name="title">OSINT Tool README</parameter>
-<parameter name="command">create</parameter>
 <parameter name="content"># OSINT Information Gathering Tool
 
 A Python-based command-line tool for gathering Open Source Intelligence (OSINT) information about a target individual by generating links to various online resources.
