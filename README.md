@@ -1,46 +1,52 @@
+# OSINT Information Gathering Tool
 
-## OSINT Information Gathering Tool
-
-A Python-based command-line tool for gathering Open Source Intelligence (OSINT) information about a target individual by generating links to various online resources.
+A comprehensive OSINT (Open Source Intelligence) command-line tool that generates links to various online platforms where information about a target might be available.
 
 ## Overview
 
-This tool helps streamline the initial phase of OSINT research by automatically generating links to search results across multiple categories of online resources. It provides a structured approach to open source intelligence gathering for legitimate research purposes.
+This tool helps security researchers, investigators, and privacy-conscious individuals by aggregating search links across multiple OSINT resources. Rather than scraping data directly (which could violate terms of service or privacy laws), it provides organized links for manual investigation.
 
 ## Features
 
-- Searches across 7 major categories of OSINT resources:
-  - Social Media (Twitter/X, LinkedIn, Facebook, Instagram, Reddit, GitHub)
-  - Data Breach Sites (Have I Been Pwned, BreachDirectory, DeHashed)
-  - People Directories (Whitepages, Spokeo, PeopleFinders, etc.)
-  - Professional Data (Google Scholar, ResearchGate, Crunchbase)
-  - Public Records (voter records, corporate filings, SEC documents)
-  - General Web Presence (search engines, Wayback Machine)
-  - Images (Google Images, Bing Images, Yandex, facial recognition services)
-- Displays results in formatted console tables
-- Exports results to JSON for further analysis
-- Command-line interface with customizable parameters
+- Searches across 12 different OSINT categories:
+  - Social Media
+  - Data Breach Sites
+  - People Directories
+  - Professional Data
+  - Public Records
+  - Web Presence
+  - Images
+  - Dark Web
+  - Reverse Phone Lookup
+  - Email Addresses
+  - Geolocation
+  - Blockchain
+
+- Provides formatted output with the Rich library for improved readability
+- Progress indicators for search operations
+- JSON export for saving and sharing results
+- Configurable rate limits and timeouts
+- Error handling and logging
 
 ## Installation
 
-### Prerequisites
-
-- Python 3.6 or higher
-- pip (Python package installer)
+### Requirements
+- Python 3.6+
+- Required libraries: requests, beautifulsoup4, rich
 
 ### Setup
 
-1. Clone this repository or download the script:
-
-```bash
-git clone https://github.com/yourusername/osint-tool.git
-cd osint-tool
-```
-
-2. Install the required dependencies:
+1. Clone the repository or download the script
+2. Install required dependencies:
 
 ```bash
 pip install requests beautifulsoup4 rich
+```
+
+3. Make the script executable (Linux/Mac):
+
+```bash
+chmod +x osintv3.py
 ```
 
 ## Usage
@@ -48,100 +54,76 @@ pip install requests beautifulsoup4 rich
 ### Basic Usage
 
 ```bash
-python osint_tool.py "John Smith"
+python osintv3.py "John Smith"
 ```
 
-### Command Line Options
+### Save Results to JSON File
 
-```
-python osint_tool.py [-h] [-r RATE_LIMIT] [-t TIMEOUT] [-o OUTPUT] [-v] name
-```
-
-#### Arguments:
-
-- `name`: The name of the target to gather information about (required)
-- `-r, --rate-limit`: Time to wait between requests in seconds (default: 1)
-- `-t, --timeout`: Request timeout in seconds (default: 10)
-- `-o, --output`: Custom output file for results (default: automatically generated)
-- `-v, --verbose`: Enable verbose output for debugging
-- `-h, --help`: Show help message
-
-### Examples
-
-Search for information about "Jane Doe":
 ```bash
-python osint_tool.py "Jane Doe"
+python osintv3.py "Jane Doe" --output results.json
 ```
 
-Export results to a specific file:
+### Additional Options
+
 ```bash
-python osint_tool.py "Jane Doe" --output jane_results.json
+python osintv3.py "Alex Johnson" --rate-limit 2 --timeout 15 --verbose
 ```
 
-Use custom rate limiting:
-```bash
-python osint_tool.py "Jane Doe" --rate-limit 2
-```
+### Command-Line Arguments
+
+- `target_name`: Target name for OSINT search (required)
+- `--output`: Output file path for JSON results
+- `--rate-limit`: Rate limit between requests in seconds (default: 1)
+- `--timeout`: Request timeout in seconds (default: 10)
+- `--verbose`: Enable verbose output
 
 ## Output
 
-The tool generates two types of output:
+The tool generates a structured display in the terminal using tables for each category of OSINT sources. Each table includes:
+- Source name
+- Description of the source
+- URL to search for the target
 
-1. **Console Output**: Formatted tables showing all search categories and sources
-2. **JSON File**: A structured JSON file containing all search results
+If the `--output` parameter is specified, the results are also saved to a JSON file with the following structure:
 
-Example JSON structure:
 ```json
 {
-  "Social Media": {
-    "Twitter/X": {
-      "url": "https://twitter.com/search?q=Jane%20Doe&src=typed_query&f=user",
-      "description": "Potential Twitter/X profiles for Jane Doe"
+  "target": "Target Name",
+  "timestamp": "YYYY-MM-DD HH:MM:SS",
+  "results": {
+    "Category1": {
+      "Source1": {
+        "url": "https://example.com/search?q=target",
+        "description": "Description of the source"
+      },
+      ...
     },
     ...
-  },
-  ...
+  }
 }
 ```
 
 ## Legal and Ethical Considerations
 
-This tool is designed for legitimate research purposes only. It does not perform any actual scraping or data collection, but rather generates links to publicly accessible search pages.
+This tool is intended for:
+- Security researchers conducting authorized assessments
+- Individuals checking their own digital footprint
+- Law enforcement with proper legal authorization
+- Privacy advocates educating on digital exposure
 
-When conducting OSINT research:
-
-- Respect privacy and legal boundaries
-- Follow the terms of service for each platform
-- Use the information obtained ethically and responsibly
-- Be aware of applicable laws regarding information gathering in your jurisdiction
+**Please use responsibly and ethically. Always respect privacy and adhere to applicable laws and regulations.**
 
 ## Limitations
 
-- The tool only generates search links and does not perform actual data collection
-- Results require manual verification and investigation
-- Some linked services may require registration or authentication
-- Search effectiveness depends on the uniqueness of the target's name
-
-## Future Enhancements
-
-Potential future improvements:
-
-- Email and username search capabilities
-- Location-based search options
-- Historical data search integration
-- Automated result verification
-- Result correlation and analysis features
+- The tool only generates links for manual investigation and does not scrape or extract data
+- No validation that the target exists on the specified platforms
+- Some services referenced may require registration or payment for full functionality
+- Dark web links require specialized browsers like Tor to access
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions to improve the tool are welcome! Please feel free to submit issues or pull requests.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Disclaimer
-
-This tool is provided for educational and research purposes only. The author assumes no liability for any misuse of this software or for any damages that might result from its use.
-</parameter>
-</invoke>
+[MIT License](LICENSE)
