@@ -3,7 +3,7 @@
 OSINT Information Gathering Tool
 --------------------------------
 This script allows you to search for information about a person across multiple
-open-source intelligence resources. It generates and organizes links to various 
+open-source intelligence resources. It generates and organizes links to various
 online platforms where information about the target might be available.
 
 Usage:
@@ -25,7 +25,6 @@ import time
 import re
 import sys
 import os
-from concurrent.futures import ThreadPoolExecutor
 from urllib.parse import quote_plus
 from bs4 import BeautifulSoup
 from rich.console import Console
@@ -38,17 +37,17 @@ logger = logging.getLogger(__name__)
 class OSINTTool:
     """
     A tool for gathering Open Source Intelligence (OSINT) information about a target.
-    
+
     This class provides methods to search for a target across various online platforms
     and resources, generating links that can be manually investigated. It doesn't
     actually scrape or extract data from these sites due to legal and ethical considerations,
     but instead provides organized starting points for manual OSINT research.
     """
-    
+
     def __init__(self, target_name, rate_limit=1, timeout=10, verbose=False):
         """
         Initialize the OSINT Tool with target information and settings.
-        
+
         Args:
             target_name (str): The name of the target to search for
             rate_limit (int): Time to wait between requests in seconds
@@ -61,19 +60,19 @@ class OSINTTool:
         self.verbose = verbose
         self.results = {}  # Dictionary to store all search results
         self.console = Console()  # Rich console for formatted output
-        
+
         # User agent string to mimic a browser
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
         }
-    
+
     def search_social_media(self):
         """
         Generate search URLs for the target across major social media platforms.
-        
+
         This method creates links to search results on various social media platforms
         where the target might have profiles or be mentioned.
-        
+
         Returns:
             dict: Dictionary of social media platforms with their search URLs and descriptions
         """
@@ -87,7 +86,7 @@ class OSINTTool:
                 "Reddit": f"https://www.reddit.com/search/?q={quote_plus(self.target_name)}&type=user",
                 "GitHub": f"https://github.com/search?q={quote_plus(self.target_name)}&type=users",
             }
-            
+
             # Build results dictionary
             results = {}
             for platform, url in social_platforms.items():
@@ -95,7 +94,7 @@ class OSINTTool:
                     "url": url,
                     "description": f"Potential {platform} profiles for {self.target_name}"
                 }
-            
+
             return results
         except Exception as e:
             logger.error(f"Error in search_social_media: {e}")
@@ -104,14 +103,14 @@ class OSINTTool:
     def search_data_breach_sites(self):
         """
         Generate links to check if the target's information appears in data breaches.
-        
+
         This method provides URLs to services that maintain databases of leaked
         credentials and personal information from data breaches.
-        
-        Note: 
+
+        Note:
             Some of these services require registration/authentication to access
             their full functionality.
-        
+
         Returns:
             dict: Dictionary of breach checking sites with URLs and descriptions
         """
@@ -122,7 +121,7 @@ class OSINTTool:
                 "BreachDirectory": f"https://breachdirectory.org/",
                 "DeHashed": f"https://dehashed.com/search?query={quote_plus(self.target_name)}",
             }
-            
+
             # Build results dictionary
             results = {}
             for site, url in breach_sites.items():
@@ -130,7 +129,7 @@ class OSINTTool:
                     "url": url,
                     "description": f"Check if {self.target_name} appears in known data breaches"
                 }
-                
+
             return results
         except Exception as e:
             logger.error(f"Error in search_data_breach_sites: {e}")
@@ -139,10 +138,10 @@ class OSINTTool:
     def search_people_directories(self):
         """
         Search for the target across people search and directory websites.
-        
+
         These websites aggregate public records and may provide contact information,
         addresses, relatives, and other personal details.
-        
+
         Returns:
             dict: Dictionary of people search directories with URLs and descriptions
         """
@@ -156,7 +155,7 @@ class OSINTTool:
                 "FastPeopleSearch": f"https://www.fastpeoplesearch.com/name/{quote_plus(self.target_name.replace(' ', '-'))}",
                 "411.com": f"https://www.411.com/name/{quote_plus(self.target_name.replace(' ', '-'))}",
             }
-            
+
             # Build results dictionary
             results = {}
             for directory, url in directories.items():
@@ -164,7 +163,7 @@ class OSINTTool:
                     "url": url,
                     "description": f"Public records and contact information for {self.target_name}"
                 }
-                
+
             return results
         except Exception as e:
             logger.error(f"Error in search_people_directories: {e}")
@@ -173,10 +172,10 @@ class OSINTTool:
     def search_professional_data(self):
         """
         Search for professional information about the target.
-        
+
         This method generates links to platforms that may contain professional
         background, academic publications, business associations, and career info.
-        
+
         Returns:
             dict: Dictionary of professional platforms with URLs and descriptions
         """
@@ -189,7 +188,7 @@ class OSINTTool:
                 "Crunchbase": f"https://www.crunchbase.com/textsearch?q={quote_plus(self.target_name)}&entity=people",
                 "Bloomberg": f"https://www.bloomberg.com/search?query={quote_plus(self.target_name)}",
             }
-            
+
             # Build results dictionary
             results = {}
             for site, url in professional_sites.items():
@@ -197,7 +196,7 @@ class OSINTTool:
                     "url": url,
                     "description": f"Professional information, publications, and business data for {self.target_name}"
                 }
-                
+
             return results
         except Exception as e:
             logger.error(f"Error in search_professional_data: {e}")
@@ -206,10 +205,10 @@ class OSINTTool:
     def search_public_records(self):
         """
         Search for public records related to the target.
-        
+
         This method provides links to resources that maintain databases of official
         public records such as voter registrations, property records, and corporate filings.
-        
+
         Returns:
             dict: Dictionary of public record sources with URLs and descriptions
         """
@@ -222,7 +221,7 @@ class OSINTTool:
                 "SEC Edgar": f"https://www.sec.gov/cgi-bin/browse-edgar?company={quote_plus(self.target_name)}&owner=exclude&action=getcompany",
                 "Property Records": f"https://www.propertyshark.com/mason/Search/",
             }
-            
+
             # Build results dictionary
             results = {}
             for record_type, url in public_records.items():
@@ -230,7 +229,7 @@ class OSINTTool:
                     "url": url,
                     "description": f"Public records and official filings that may mention {self.target_name}"
                 }
-                
+
             return results
         except Exception as e:
             logger.error(f"Error in search_public_records: {e}")
@@ -239,10 +238,10 @@ class OSINTTool:
     def search_web_presence(self):
         """
         Search for general web presence of the target.
-        
+
         This method generates links to search engines and web archives that can
         provide a broad overview of the target's online presence and history.
-        
+
         Returns:
             dict: Dictionary of search engines and web archives with URLs and descriptions
         """
@@ -256,7 +255,7 @@ class OSINTTool:
                 "Yandex": f"https://yandex.com/search/?text={quote_plus(self.target_name)}",
                 "Wayback Machine": f"https://web.archive.org/web/*/{quote_plus(self.target_name)}",
             }
-            
+
             # Build results dictionary
             results = {}
             for engine, url in web_searches.items():
@@ -264,7 +263,7 @@ class OSINTTool:
                     "url": url,
                     "description": f"General web search for {self.target_name}"
                 }
-                
+
             return results
         except Exception as e:
             logger.error(f"Error in search_web_presence: {e}")
@@ -273,10 +272,10 @@ class OSINTTool:
     def search_images(self):
         """
         Search for images of the target.
-        
+
         This method provides links to image search engines and facial recognition
         services that might find photos of the target online.
-        
+
         Returns:
             dict: Dictionary of image search engines with URLs and descriptions
         """
@@ -289,27 +288,173 @@ class OSINTTool:
                 "TinEye": f"https://tineye.com/",  # Requires manual image upload
                 "PimEyes": f"https://pimeyes.com/en",  # Requires manual image upload
             }
-            
+
             # Build results dictionary
             results = {}
             for engine, url in image_searches.items():
                 results[engine] = {
                     "url": url,
-                    "description": f"Image search for {self.target_name}" 
+                    "description": f"Image search for {self.target_name}"
                 }
-                
+
             return results
         except Exception as e:
             logger.error(f"Error in search_images: {e}")
             return {}
 
+    def search_dark_web(self):
+        """
+        Generate search URLs for the target across dark web search engines.
+
+        This method creates links to search results on various dark web search engines
+        where the target might have profiles or mentions.
+
+        Returns:
+            dict: Dictionary of dark web platforms with their search URLs and descriptions
+        """
+        try:
+            # Define dark web search engines and their search URL patterns
+            dark_web_search_engines = {
+                "Ahmia": f"https://ahmia.fi/search/?q={quote_plus(self.target_name)}",
+                "DarkSearch": f"https://darksearch.io/search?query={quote_plus(self.target_name)}",
+            }
+
+            # Build results dictionary
+            results = {}
+            for platform, url in dark_web_search_engines.items():
+                results[platform] = {
+                    "url": url,
+                    "description": f"Search for {self.target_name} on {platform}"
+                }
+
+            return results
+        except Exception as e:
+            logger.error(f"Error in search_dark_web: {e}")
+            return {}
+
+    def search_reverse_phone(self):
+        """
+        Generate search URLs for reverse phone lookup.
+
+        This method creates links to search results on various reverse phone lookup platforms.
+
+        Returns:
+            dict: Dictionary of reverse phone lookup platforms with their search URLs and descriptions
+        """
+        try:
+            # Define reverse phone lookup platforms and their search URL patterns
+            phone_lookup_sites = {
+                "TrueCaller": f"https://www.truecaller.com/search/us/{quote_plus(self.target_name)}",
+                "AnyWho": f"https://www.anywho.com/phone/{quote_plus(self.target_name)}",
+            }
+
+            # Build results dictionary
+            results = {}
+            for platform, url in phone_lookup_sites.items():
+                results[platform] = {
+                    "url": url,
+                    "description": f"Reverse phone lookup for {self.target_name} on {platform}"
+                }
+
+            return results
+        except Exception as e:
+            logger.error(f"Error in search_reverse_phone: {e}")
+            return {}
+
+    def search_email_addresses(self):
+        """
+        Generate search URLs for email address lookup.
+
+        This method creates links to search results on various email lookup platforms.
+
+        Returns:
+            dict: Dictionary of email lookup platforms with their search URLs and descriptions
+        """
+        try:
+            # Define email lookup platforms and their search URL patterns
+            email_lookup_sites = {
+                "Hunter.io": f"https://hunter.io/search/{quote_plus(self.target_name)}",
+                "EmailRep": f"https://emailrep.io/{quote_plus(self.target_name)}",
+            }
+
+            # Build results dictionary
+            results = {}
+            for platform, url in email_lookup_sites.items():
+                results[platform] = {
+                    "url": url,
+                    "description": f"Email lookup for {self.target_name} on {platform}"
+                }
+
+            return results
+        except Exception as e:
+            logger.error(f"Error in search_email_addresses: {e}")
+            return {}
+
+    def search_geolocation(self):
+        """
+        Generate search URLs for IP address geolocation.
+
+        This method creates links to search results on various geolocation platforms.
+
+        Returns:
+            dict: Dictionary of geolocation platforms with their search URLs and descriptions
+        """
+        try:
+            # Define geolocation platforms and their search URL patterns
+            geolocation_sites = {
+                "IP2Location": f"https://www.ip2location.com/demo/{quote_plus(self.target_name)}",
+                "MaxMind": f"https://www.maxmind.com/en/geoip-demo/{quote_plus(self.target_name)}",
+            }
+
+            # Build results dictionary
+            results = {}
+            for platform, url in geolocation_sites.items():
+                results[platform] = {
+                    "url": url,
+                    "description": f"Geolocation lookup for {self.target_name} on {platform}"
+                }
+
+            return results
+        except Exception as e:
+            logger.error(f"Error in search_geolocation: {e}")
+            return {}
+
+    def search_blockchain(self):
+        """
+        Generate search URLs for blockchain and cryptocurrency transactions.
+
+        This method creates links to search results on various blockchain exploration platforms.
+
+        Returns:
+            dict: Dictionary of blockchain platforms with their search URLs and descriptions
+        """
+        try:
+            # Define blockchain platforms and their search URL patterns
+            blockchain_sites = {
+                "Blockchain.info": f"https://www.blockchain.com/btc/address/{quote_plus(self.target_name)}",
+                "Etherscan": f"https://etherscan.io/address/{quote_plus(self.target_name)}",
+            }
+
+            # Build results dictionary
+            results = {}
+            for platform, url in blockchain_sites.items():
+                results[platform] = {
+                    "url": url,
+                    "description": f"Blockchain transactions for {self.target_name} on {platform}"
+                }
+
+            return results
+        except Exception as e:
+            logger.error(f"Error in search_blockchain: {e}")
+            return {}
+
     def run_all_searches(self):
         """
         Run all search methods and compile results.
-        
+
         This method executes all the individual search methods and combines
         their results into a single structured dictionary.
-        
+
         Returns:
             dict: Combined dictionary of all search results categorized by type
         """
@@ -320,30 +465,45 @@ class OSINTTool:
                 TextColumn("[progress.description]{task.description}"),
                 console=self.console
             ) as progress:
-                task = progress.add_task("[cyan]Running OSINT searches...", total=7)
-                
+                task = progress.add_task("[cyan]Running OSINT searches...", total=12)
+
                 # Collect results from all search methods
                 self.results["Social Media"] = self.search_social_media()
                 progress.update(task, advance=1)
-                
+
                 self.results["Data Breach Sites"] = self.search_data_breach_sites()
                 progress.update(task, advance=1)
-                
+
                 self.results["People Directories"] = self.search_people_directories()
                 progress.update(task, advance=1)
-                
+
                 self.results["Professional Data"] = self.search_professional_data()
                 progress.update(task, advance=1)
-                
+
                 self.results["Public Records"] = self.search_public_records()
                 progress.update(task, advance=1)
-                
+
                 self.results["Web Presence"] = self.search_web_presence()
                 progress.update(task, advance=1)
-                
+
                 self.results["Images"] = self.search_images()
                 progress.update(task, advance=1)
-            
+
+                self.results["Dark Web"] = self.search_dark_web()
+                progress.update(task, advance=1)
+
+                self.results["Reverse Phone Lookup"] = self.search_reverse_phone()
+                progress.update(task, advance=1)
+
+                self.results["Email Addresses"] = self.search_email_addresses()
+                progress.update(task, advance=1)
+
+                self.results["Geolocation"] = self.search_geolocation()
+                progress.update(task, advance=1)
+
+                self.results["Blockchain"] = self.search_blockchain()
+                progress.update(task, advance=1)
+
             return self.results
         except Exception as e:
             logger.error(f"Error in run_all_searches: {e}")
@@ -352,138 +512,6 @@ class OSINTTool:
     def display_results(self):
         """
         Display the collected OSINT information in a formatted table.
-        
-        This method uses the Rich library to create nicely formatted tables
-        showing all the search results grouped by category.
-        """
-        try:
-            # Print header with target name
-            self.console.print(f"\n[bold green]OSINT Results for:[/bold green] [bold yellow]{self.target_name}[/bold yellow]\n")
-            
-            # Loop through each category and create a table for its results
-            for category, sources in self.results.items():
-                self.console.print(f"[bold blue]{category}[/bold blue]")
-                
-                # Create and format the table
-                table = Table(show_header=True, header_style="bold")
-                table.add_column("Source")
-                table.add_column("URL")
-                table.add_column("Description")
-                
-                # Add rows for each source in the category
-                for source, data in sources.items():
-                    table.add_row(
-                        source,
-                        data["url"],
-                        data["description"]
-                    )
-                
-                # Display the table and add spacing
-                self.console.print(table)
-                self.console.print("")
-        except Exception as e:
-            logger.error(f"Error in display_results: {e}")
 
-    def export_results(self, filename=None):
+        This method uses the Rich library to create nicely"
         """
-        Export the results to a JSON file.
-        
-        This method saves all the collected search results to a JSON file for
-        further analysis or reference.
-        
-        Args:
-            filename (str, optional): Filename to save the results to.
-                If not provided, a filename is generated based on the target name.
-        """
-        try:
-            if filename is None:
-                # Generate a filename based on the target name and timestamp
-                # Replace non-alphanumeric characters with underscore
-                safe_name = re.sub(r'[^\w]', '_', self.target_name.lower())
-                timestamp = int(time.time())
-                filename = f"osint_{safe_name}_{timestamp}.json"
-            
-            # Write results to the JSON file
-            with open(filename, 'w') as f:
-                json.dump(self.results, f, indent=4)
-            
-            # Confirm to the user
-            self.console.print(f"[bold green]Results exported to:[/bold green] {filename}")
-        except Exception as e:
-            logger.error(f"Error in export_results: {e}")
-
-def main():
-    """
-    Main function to handle command line interface.
-    
-    This function parses command line arguments, initializes the OSINT tool,
-    and manages the execution flow including error handling.
-    """
-    # Set up command line argument parser
-    parser = argparse.ArgumentParser(
-        description="OSINT Information Gathering Tool",
-        epilog="Example: python osint_tool.py 'John Smith' --output results.json"
-    )
-    
-    # Add command line arguments
-    parser.add_argument("name", 
-                       help="Name of the target to gather information about")
-    parser.add_argument("-r", "--rate-limit", 
-                       type=int, default=1, 
-                       help="Time to wait between requests in seconds (default: 1)")
-    parser.add_argument("-t", "--timeout", 
-                       type=int, default=10,
-                       help="Request timeout in seconds (default: 10)")
-    parser.add_argument("-o", "--output", 
-                       type=str, 
-                       help="Output file for the results (default: automatically generated)")
-    parser.add_argument("-v", "--verbose", 
-                       action="store_true",
-                       help="Enable verbose output")
-    
-    # Parse the arguments
-    args = parser.parse_args()
-    
-    try:
-        # Initialize and run the OSINT tool
-        osint = OSINTTool(
-            args.name,
-            rate_limit=args.rate_limit,
-            timeout=args.timeout,
-            verbose=args.verbose
-        )
-        
-        # Create console for output
-        console = Console()
-        console.print(f"\n[bold cyan]Starting OSINT search for:[/bold cyan] {args.name}\n")
-        
-        # Run all searches
-        osint.run_all_searches()
-        
-        # Display results in formatted tables
-        osint.display_results()
-        
-        # Export results to JSON file
-        if args.output:
-            osint.export_results(args.output)
-        else:
-            osint.export_results()
-            
-    except KeyboardInterrupt:
-        # Handle user interruption (Ctrl+C)
-        console = Console()
-        console.print("\n[bold red]Search interrupted by user[/bold red]")
-        sys.exit(1)
-    except Exception as e:
-        # Handle other exceptions
-        console = Console()
-        console.print(f"\n[bold red]Error:[/bold red] {str(e)}")
-        if args.verbose:
-            # Print full traceback if verbose mode is enabled
-            import traceback
-            console.print(traceback.format_exc())
-        sys.exit(1)
-
-# Entry point for script execution
-if __name__ == "__main__":
-    main()
