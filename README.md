@@ -1,5 +1,5 @@
 
-<parameter name="content"># OSINT Information Gathering Tool
+## OSINT Information Gathering Tool
 
 A Python-based command-line tool for gathering Open Source Intelligence (OSINT) information about a target individual by generating links to various online resources.
 
