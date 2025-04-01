@@ -1,4 +1,4 @@
-<function_calls>
+
 <invoke name="artifacts">
 <parameter name="id">osint-readme</parameter>
 <parameter name="type">text/markdown</parameter>
